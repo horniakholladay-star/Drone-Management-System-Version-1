@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="fragments/header :: head('无人机详情')"></head>
+<body>
+
+<div th:replace="fragments/header :: navbar"></div>
+
+<div class="container-fluid main-container">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar" shiro:authenticated="">
+            <ul class="nav nav-sidebar">
+                <li><a th:href="@{/drone/list}"><span class="glyphicon glyphicon-th-list"></span> 无人机列表</a></li>
+                <li><a th:href="@{/drone/add}"><span class="glyphicon glyphicon-plus-sign"></span> 新增无人机</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" shiro:authenticated="">
+            <h1 class="page-header">
+                <span class="glyphicon glyphicon-info-sign"></span> 无人机详情
+            </h1>
+
+            <div class="panel panel-default" th:if="${drone != null}">
+                <div class="panel-heading">
+                    <h3 class="panel-title" th:text="${drone.droneName} + ' — ' + ${drone.droneModel}"></h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped detail-table">
+                        <tr><th class="col-sm-3">ID</th><td th:text="${drone.id}"></td></tr>
+                        <tr><th>无人机名称</th><td th:text="${drone.droneName}"></td></tr>
+                        <tr><th>无人机型号</th><td th:text="${drone.droneModel}"></td></tr>
+                        <tr><th>制造商</th><td th:text="${drone.manufacturer}"></td></tr>
+                        <tr><th>序列号</th><td th:text="${drone.serialNumber}"></td></tr>
+                        <tr><th>无人机类型</th><td th:text="${drone.droneType}"></td></tr>
+                        <tr><th>重量</th><td th:text="${drone.weight} + ' kg'"></td></tr>
+                        <tr><th>最大飞行高度</th><td th:text="${drone.maxAltitude} + ' m'"></td></tr>
+                        <tr><th>最大飞行速度</th><td th:text="${drone.maxSpeed} + ' km/h'"></td></tr>
+                        <tr><th>续航时间</th><td th:text="${drone.endurance} + ' min'"></td></tr>
+                        <tr><th>最大航程</th><td th:text="${drone.range != null ? drone.range + ' km' : '-'}"></td></tr>
+                        <tr><th>相机类型</th><td th:text="${drone.cameraType != null && !drone.cameraType.isEmpty() ? drone.cameraType : '-'}"></td></tr>
+                        <tr><th>载荷能力</th><td th:text="${drone.payloadCapacity != null ? drone.payloadCapacity + ' kg' : '-'}"></td></tr>
+                        <tr><th>电池容量</th><td th:text="${drone.batteryCapacity != null ? drone.batteryCapacity + ' mAh' : '-'}"></td></tr>
+                        <tr><th>状态</th>
+                            <td>
+                                <span class="label"
+                                      th:classappend="${drone.status == '正常'} ? 'label-success' : (${drone.status == '维护中'} ? 'label-warning' : (${drone.status == '故障'} ? 'label-danger' : 'label-default'))"
+                                      th:text="${drone.status}"></span>
+                            </td>
+                        </tr>
+                        <tr><th>购买日期</th><td th:text="${drone.purchaseDate != null ? #dates.format(drone.purchaseDate, 'yyyy-MM-dd') : '-'}"></td></tr>
+                        <tr><th>描述</th><td th:text="${drone.description != null && !drone.description.isEmpty() ? drone.description : '-'}"></td></tr>
+                        <tr><th>创建时间</th><td th:text="${drone.createTime != null ? #dates.format(drone.createTime, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td></tr>
+                        <tr><th>更新时间</th><td th:text="${drone.updateTime != null ? #dates.format(drone.updateTime, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td></tr>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <a th:href="@{/drone/edit/{id}(id=${drone.id})}" class="btn btn-warning">
+                        <span class="glyphicon glyphicon-edit"></span> 编辑</a>
+                    <a th:href="@{/drone/list}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-arrow-left"></span> 返回列表</a>
+                </div>
+            </div>
+
+            <div th:replace="fragments/footer :: footer"></div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: scripts"></div>
+</body>
+</html>

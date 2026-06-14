@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.drone.management.dao.DroneDao">
+
+    <!-- ==================== Result Map ==================== -->
+    <resultMap id="droneMap" type="com.drone.management.entity.Drone">
+        <id     column="id"              property="id"/>
+        <result column="drone_name"      property="droneName"/>
+        <result column="drone_model"     property="droneModel"/>
+        <result column="manufacturer"    property="manufacturer"/>
+        <result column="serial_number"   property="serialNumber"/>
+        <result column="drone_type"      property="droneType"/>
+        <result column="weight"          property="weight"/>
+        <result column="max_altitude"    property="maxAltitude"/>
+        <result column="max_speed"       property="maxSpeed"/>
+        <result column="endurance"       property="endurance"/>
+        <result column="range_"          property="range"/>
+        <result column="camera_type"     property="cameraType"/>
+        <result column="payload_capacity" property="payloadCapacity"/>
+        <result column="battery_capacity" property="batteryCapacity"/>
+        <result column="status"          property="status"/>
+        <result column="purchase_date"   property="purchaseDate"/>
+        <result column="description"     property="description"/>
+        <result column="create_time"     property="createTime"/>
+        <result column="update_time"     property="updateTime"/>
+    </resultMap>
+
+    <!-- ==================== SQL ==================== -->
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.drone.management.entity.Drone"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO drone (
+            drone_name, drone_model, manufacturer, serial_number,
+            drone_type, weight, max_altitude, max_speed,
+            endurance, range_, camera_type, payload_capacity,
+            battery_capacity, status, purchase_date, description,
+            create_time, update_time
+        ) VALUES (
+            #{droneName}, #{droneModel}, #{manufacturer}, #{serialNumber},
+            #{droneType}, #{weight}, #{maxAltitude}, #{maxSpeed},
+            #{endurance}, #{range}, #{cameraType}, #{payloadCapacity},
+            #{batteryCapacity}, #{status}, #{purchaseDate}, #{description},
+            #{createTime}, #{updateTime}
+        )
+    </insert>
+
+    <!-- 删除 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM drone WHERE id = #{id}
+    </delete>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="com.drone.management.entity.Drone">
+        UPDATE drone SET
+            drone_name      = #{droneName},
+            drone_model     = #{droneModel},
+            manufacturer    = #{manufacturer},
+            serial_number   = #{serialNumber},
+            drone_type      = #{droneType},
+            weight          = #{weight},
+            max_altitude    = #{maxAltitude},
+            max_speed       = #{maxSpeed},
+            endurance       = #{endurance},
+            range_          = #{range},
+            camera_type     = #{cameraType},
+            payload_capacity = #{payloadCapacity},
+            battery_capacity = #{batteryCapacity},
+            status          = #{status},
+            purchase_date   = #{purchaseDate},
+            description     = #{description},
+            update_time     = #{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID查询 -->
+    <select id="selectById" parameterType="long" resultMap="droneMap">
+        SELECT * FROM drone WHERE id = #{id}
+    </select>
+
+    <!-- 分页条件查询 -->
+    <select id="selectByPage" resultMap="droneMap">
+        SELECT * FROM drone
+        <where>
+            <if test="droneName != null and droneName != ''">
+                AND drone_name LIKE '%' || #{droneName} || '%'
+            </if>
+            <if test="droneModel != null and droneModel != ''">
+                AND drone_model LIKE '%' || #{droneModel} || '%'
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 条件统计总数 -->
+    <select id="countByCondition" resultType="long">
+        SELECT COUNT(*) FROM drone
+        <where>
+            <if test="droneName != null and droneName != ''">
+                AND drone_name LIKE '%' || #{droneName} || '%'
+            </if>
+            <if test="droneModel != null and droneModel != ''">
+                AND drone_model LIKE '%' || #{droneModel} || '%'
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询所有 -->
+    <select id="selectAll" resultMap="droneMap">
+        SELECT * FROM drone ORDER BY id DESC
+    </select>
+
+</mapper>

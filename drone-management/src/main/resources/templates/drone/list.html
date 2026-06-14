@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="fragments/header :: head('无人机列表')"></head>
+<body>
+
+<div th:replace="fragments/header :: navbar"></div>
+
+<div class="container-fluid main-container">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar" shiro:authenticated="">
+            <ul class="nav nav-sidebar">
+                <li class="active"><a th:href="@{/drone/list}"><span class="glyphicon glyphicon-th-list"></span> 无人机列表</a></li>
+                <li><a th:href="@{/drone/add}"><span class="glyphicon glyphicon-plus-sign"></span> 新增无人机</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" shiro:authenticated="">
+            <!-- 提示消息 -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade in">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade in">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span th:text="${error}"></span>
+            </div>
+
+            <h1 class="page-header">
+                <span class="glyphicon glyphicon-plane"></span> 无人机信息列表
+            </h1>
+
+            <!-- 搜索表单 -->
+            <form class="form-inline well" th:action="@{/drone/list}" method="get" accept-charset="UTF-8">
+                <div class="form-group">
+                    <label for="droneName">名称</label>
+                    <input type="text" class="form-control" id="droneName"
+                           name="droneName" th:value="${droneName}" placeholder="无人机名称">
+                </div>
+                <div class="form-group">
+                    <label for="droneModel">型号</label>
+                    <input type="text" class="form-control" id="droneModel"
+                           name="droneModel" th:value="${droneModel}" placeholder="无人机型号">
+                </div>
+                <div class="form-group">
+                    <label for="status">状态</label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="">全部</option>
+                        <option value="正常" th:selected="${status == '正常'}">正常</option>
+                        <option value="维护中" th:selected="${status == '维护中'}">维护中</option>
+                        <option value="故障" th:selected="${status == '故障'}">故障</option>
+                        <option value="停用" th:selected="${status == '停用'}">停用</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-search"></span> 搜索</button>
+                <a th:href="@{/drone/list}" class="btn btn-default">重置</a>
+            </form>
+
+            <!-- 数据表格 -->
+            <div class="table-responsive" th:if="${page != null && page.data != null && !page.data.isEmpty()}">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>型号</th>
+                            <th>制造商</th>
+                            <th>序列号</th>
+                            <th>类型</th>
+                            <th>重量(kg)</th>
+                            <th>最大高度(m)</th>
+                            <th>最大速度(km/h)</th>
+                            <th>续航(min)</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="drone : ${page.data}">
+                            <td th:text="${drone.id}"></td>
+                            <td><a th:href="@{/drone/detail/{id}(id=${drone.id})}"
+                                   th:text="${drone.droneName}"></a></td>
+                            <td th:text="${drone.droneModel}"></td>
+                            <td th:text="${drone.manufacturer}"></td>
+                            <td th:text="${drone.serialNumber}"></td>
+                            <td th:text="${drone.droneType}"></td>
+                            <td th:text="${drone.weight}"></td>
+                            <td th:text="${drone.maxAltitude}"></td>
+                            <td th:text="${drone.maxSpeed}"></td>
+                            <td th:text="${drone.endurance}"></td>
+                            <td>
+                                <span class="label"
+                                      th:classappend="${drone.status == '正常'} ? 'label-success' : (${drone.status == '维护中'} ? 'label-warning' : (${drone.status == '故障'} ? 'label-danger' : 'label-default'))"
+                                      th:text="${drone.status}"></span>
+                            </td>
+                            <td>
+                                <a th:href="@{/drone/detail/{id}(id=${drone.id})}"
+                                   class="btn btn-info btn-xs" title="详情">
+                                    <span class="glyphicon glyphicon-eye-open"></span></a>
+                                <a th:href="@{/drone/edit/{id}(id=${drone.id})}"
+                                   class="btn btn-warning btn-xs" title="编辑">
+                                    <span class="glyphicon glyphicon-edit"></span></a>
+                                <button type="button" class="btn btn-danger btn-xs btn-delete"
+                                        th:attr="data-id=${drone.id},data-name=${drone.droneName}"
+                                        title="删除">
+                                    <span class="glyphicon glyphicon-trash"></span></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 空数据提示 -->
+            <div th:unless="${page != null && page.data != null && !page.data.isEmpty()}"
+                 class="alert alert-info">
+                <span class="glyphicon glyphicon-info-sign"></span> 暂无无人机数据，请
+                <a th:href="@{/drone/add}">新增无人机</a>
+            </div>
+
+            <!-- 分页 -->
+            <nav th:if="${page != null && page.totalPages > 1}" aria-label="分页导航">
+                <ul class="pagination">
+                    <!-- 上一页 -->
+                    <li th:classappend="${page.pageNum <= 1} ? 'disabled' : ''">
+                        <a th:if="${page.pageNum > 1}"
+                           th:href="@{/drone/list(droneName=${droneName}, droneModel=${droneModel}, status=${status}, pageNum=${page.pageNum - 1}, pageSize=${page.pageSize})}"
+                           aria-label="上一页">&laquo;</a>
+                        <span th:unless="${page.pageNum > 1}">&laquo;</span>
+                    </li>
+
+                    <!-- 页码 -->
+                    <li th:each="i : ${#numbers.sequence(1, page.totalPages)}"
+                        th:classappend="${i == page.pageNum} ? 'active' : ''">
+                        <a th:href="@{/drone/list(droneName=${droneName}, droneModel=${droneModel}, status=${status}, pageNum=${i}, pageSize=${page.pageSize})}"
+                           th:text="${i}"></a>
+                    </li>
+
+                    <!-- 下一页 -->
+                    <li th:classappend="${page.pageNum >= page.totalPages} ? 'disabled' : ''">
+                        <a th:if="${page.pageNum < page.totalPages}"
+                           th:href="@{/drone/list(droneName=${droneName}, droneModel=${droneModel}, status=${status}, pageNum=${page.pageNum + 1}, pageSize=${page.pageSize})}"
+                           aria-label="下一页">&raquo;</a>
+                        <span th:unless="${page.pageNum < page.totalPages}">&raquo;</span>
+                    </li>
+                </ul>
+                <span class="text-muted">
+                    共 <strong th:text="${page.total}"></strong> 条记录，
+                    第 <strong th:text="${page.pageNum}"></strong>/<strong th:text="${page.totalPages}"></strong> 页
+                </span>
+            </nav>
+
+            <div th:replace="fragments/footer :: footer"></div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: scripts"></div>
+
+<!-- 删除确认弹窗 -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-warning-sign text-danger"></span> 确认删除</h4>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除无人机 "<strong id="deleteDroneName"></strong>" 吗？</p>
+                <p class="text-danger">此操作不可恢复！</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" th:action="@{/drone/delete}" method="post" accept-charset="UTF-8">
+                    <input type="hidden" name="id" id="deleteDroneId">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-trash"></span> 确认删除</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 使用事件委托处理删除按钮点击
+    $(document).on('click', '.btn-delete', function () {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        $('#deleteDroneId').val(id);
+        $('#deleteDroneName').text(name);
+        $('#deleteModal').modal('show');
+    });
+</script>
+
+</body>
+</html>

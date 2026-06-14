@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="fragments/header :: head('首页')"></head>
+<body>
+
+<div th:replace="fragments/header :: navbar"></div>
+
+<div class="container-fluid main-container">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar" shiro:authenticated="">
+            <ul class="nav nav-sidebar">
+                <li><a th:href="@{/drone/list}"><span class="glyphicon glyphicon-th-list"></span> 无人机列表</a></li>
+                <li><a th:href="@{/drone/add}"><span class="glyphicon glyphicon-plus-sign"></span> 新增无人机</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" shiro:authenticated="">
+            <h1 class="page-header">
+                <span class="glyphicon glyphicon-dashboard"></span> 控制台
+            </h1>
+
+            <div class="jumbotron">
+                <h2>欢迎使用无人机信息管理系统</h2>
+                <p>本系统提供无人机信息的录入、查询、修改和删除功能。</p>
+                <p>
+                    <a class="btn btn-primary btn-lg" th:href="@{/drone/list}" role="button">
+                        <span class="glyphicon glyphicon-list"></span> 查看无人机列表
+                    </a>
+                    <a class="btn btn-success btn-lg" th:href="@{/drone/add}" role="button">
+                        <span class="glyphicon glyphicon-plus"></span> 新增无人机
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: scripts"></div>
+</body>
+</html>

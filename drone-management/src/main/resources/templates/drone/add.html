@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="fragments/header :: head('新增无人机')"></head>
+<body>
+
+<div th:replace="fragments/header :: navbar"></div>
+
+<div class="container-fluid main-container">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar" shiro:authenticated="">
+            <ul class="nav nav-sidebar">
+                <li><a th:href="@{/drone/list}"><span class="glyphicon glyphicon-th-list"></span> 无人机列表</a></li>
+                <li class="active"><a th:href="@{/drone/add}"><span class="glyphicon glyphicon-plus-sign"></span> 新增无人机</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" shiro:authenticated="">
+            <h1 class="page-header">
+                <span class="glyphicon glyphicon-plus-sign"></span> 新增无人机
+            </h1>
+
+            <!-- 错误提示 -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade in">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span th:text="${error}"></span>
+            </div>
+
+            <form th:action="@{/drone/add}" method="post" class="form-horizontal drone-form" accept-charset="UTF-8">
+                <div th:replace="drone/add :: droneFormFields"></div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <span class="glyphicon glyphicon-ok"></span> 保存
+                        </button>
+                        <a th:href="@{/drone/list}" class="btn btn-default btn-lg">取消</a>
+                    </div>
+                </div>
+            </form>
+
+            <div th:replace="fragments/footer :: footer"></div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: scripts"></div>
+</body>
+</html>
+
+<!-- ==================== 表单字段片段（供 add / edit 复用） ==================== -->
+<th:block th:fragment="droneFormFields">
+    <div class="form-group">
+        <label class="col-sm-2 control-label">无人机名称 <span class="text-danger">*</span></label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="droneName"
+                   th:value="${drone != null ? drone.droneName : ''}"
+                   placeholder="请输入无人机名称" required maxlength="100">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">无人机型号 <span class="text-danger">*</span></label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="droneModel"
+                   th:value="${drone != null ? drone.droneModel : ''}"
+                   placeholder="请输入无人机型号" required maxlength="50">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">制造商 <span class="text-danger">*</span></label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="manufacturer"
+                   th:value="${drone != null ? drone.manufacturer : ''}"
+                   placeholder="请输入制造商" required maxlength="100">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">序列号 <span class="text-danger">*</span></label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="serialNumber"
+                   th:value="${drone != null ? drone.serialNumber : ''}"
+                   placeholder="请输入序列号" required maxlength="50">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">无人机类型 <span class="text-danger">*</span></label>
+        <div class="col-sm-6">
+            <select class="form-control" name="droneType" required>
+                <option value="">请选择</option>
+                <option value="多旋翼" th:selected="${drone != null && drone.droneType == '多旋翼'}">多旋翼</option>
+                <option value="固定翼" th:selected="${drone != null && drone.droneType == '固定翼'}">固定翼</option>
+                <option value="直升机" th:selected="${drone != null && drone.droneType == '直升机'}">直升机</option>
+                <option value="垂直起降" th:selected="${drone != null && drone.droneType == '垂直起降'}">垂直起降</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">重量(kg) <span class="text-danger">*</span></label>
+        <div class="col-sm-6">
+            <input type="number" step="0.01" class="form-control" name="weight"
+                   th:value="${drone != null ? drone.weight : ''}"
+                   placeholder="请输入重量" required min="0.01" max="10000">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">最大飞行高度(m) <span class="text-danger">*</span></label>
+        <div class="col-sm-6">
+            <input type="number" step="0.1" class="form-control" name="maxAltitude"
+                   th:value="${drone != null ? drone.maxAltitude : ''}"
+                   placeholder="请输入最大飞行高度" required min="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">最大飞行速度(km/h) <span class="text-danger">*</span></label>
+        <div class="col-sm-6">
+            <input type="number" step="0.1" class="form-control" name="maxSpeed"
+                   th:value="${drone != null ? drone.maxSpeed : ''}"
+                   placeholder="请输入最大飞行速度" required min="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">续航时间(min) <span class="text-danger">*</span></label>
+        <div class="col-sm-6">
+            <input type="number" class="form-control" name="endurance"
+                   th:value="${drone != null ? drone.endurance : ''}"
+                   placeholder="请输入续航时间" required min="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">最大航程(km)</label>
+        <div class="col-sm-6">
+            <input type="number" step="0.1" class="form-control" name="range"
+                   th:value="${drone != null ? drone.range : ''}"
+                   placeholder="请输入最大航程" min="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">相机类型</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="cameraType"
+                   th:value="${drone != null ? drone.cameraType : ''}"
+                   placeholder="例如: 4K/红外/热成像" maxlength="50">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">载荷能力(kg)</label>
+        <div class="col-sm-6">
+            <input type="number" step="0.01" class="form-control" name="payloadCapacity"
+                   th:value="${drone != null ? drone.payloadCapacity : ''}"
+                   placeholder="请输入载荷能力" min="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">电池容量(mAh)</label>
+        <div class="col-sm-6">
+            <input type="number" class="form-control" name="batteryCapacity"
+                   th:value="${drone != null ? drone.batteryCapacity : ''}"
+                   placeholder="请输入电池容量" min="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">状态 <span class="text-danger">*</span></label>
+        <div class="col-sm-6">
+            <select class="form-control" name="status" required>
+                <option value="正常" th:selected="${drone != null && drone.status == '正常'}">正常</option>
+                <option value="维护中" th:selected="${drone != null && drone.status == '维护中'}">维护中</option>
+                <option value="故障" th:selected="${drone != null && drone.status == '故障'}">故障</option>
+                <option value="停用" th:selected="${drone != null && drone.status == '停用'}">停用</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">购买日期</label>
+        <div class="col-sm-6">
+            <input type="date" class="form-control" name="purchaseDate"
+                   th:value="${drone != null && drone.purchaseDate != null ? #dates.format(drone.purchaseDate, 'yyyy-MM-dd') : ''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">描述</label>
+        <div class="col-sm-6">
+            <textarea class="form-control" name="description" rows="4"
+                      maxlength="500" placeholder="请输入描述信息"
+                      th:text="${drone != null ? drone.description : ''}"></textarea>
+        </div>
+    </div>
+</th:block>

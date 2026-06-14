@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>400 — 请求参数错误</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="container text-center" style="margin-top: 100px;">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h2 class="panel-title">
+                        <span class="glyphicon glyphicon-warning-sign"></span> 400 — 请求参数错误
+                    </h2>
+                </div>
+                <div class="panel-body">
+                    <p class="text-warning" th:text="${message} ?: '请求参数格式不正确，请检查后重试'"></p>
+                    <a th:href="@{/drone/list}" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-home"></span> 返回首页</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+</body>
+</html>

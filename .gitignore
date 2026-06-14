@@ -1,0 +1,46 @@
+# ============================================================
+# Drone Management System — Git Ignore
+# ============================================================
+
+# ---- Maven ----
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# ---- IDE ----
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ---- Runtime ----
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.log
+*.pid
+
+# ---- Claude / Cursor ----
+.claude/
+.cursor/
+AGENTS.md
+harness-collab/
+harness-verify.sh
+harness-verify.ps1
+baseplatform/
+req1.md
+
+# ---- Temp ----
+/tmp/
+*.tmp

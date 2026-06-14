@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="fragments/header :: head('编辑无人机')"></head>
+<body>
+
+<div th:replace="fragments/header :: navbar"></div>
+
+<div class="container-fluid main-container">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar" shiro:authenticated="">
+            <ul class="nav nav-sidebar">
+                <li><a th:href="@{/drone/list}"><span class="glyphicon glyphicon-th-list"></span> 无人机列表</a></li>
+                <li><a th:href="@{/drone/add}"><span class="glyphicon glyphicon-plus-sign"></span> 新增无人机</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" shiro:authenticated="">
+            <h1 class="page-header">
+                <span class="glyphicon glyphicon-edit"></span> 编辑无人机
+            </h1>
+
+            <!-- 错误提示 -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade in">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span th:text="${error}"></span>
+            </div>
+
+            <form th:action="@{/drone/edit}" method="post" class="form-horizontal drone-form" accept-charset="UTF-8">
+                <!-- 隐藏的 ID 字段 -->
+                <input type="hidden" name="id" th:value="${drone.id}">
+
+                <div th:replace="drone/add :: droneFormFields"></div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <span class="glyphicon glyphicon-ok"></span> 更新
+                        </button>
+                        <a th:href="@{/drone/list}" class="btn btn-default btn-lg">取消</a>
+                    </div>
+                </div>
+            </form>
+
+            <div th:replace="fragments/footer :: footer"></div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: scripts"></div>
+</body>
+</html>

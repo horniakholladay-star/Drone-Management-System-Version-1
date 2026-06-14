@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} ?: '无人机管理系统'">无人机管理系统</title>
+
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}">
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+
+<body>
+
+<!-- ==================== 导航栏 ==================== -->
+<nav class="navbar navbar-inverse navbar-fixed-top" th:fragment="navbar">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#navbar-collapse" aria-expanded="false">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" th:href="@{/drone/list}">
+                <span class="glyphicon glyphicon-plane"></span> 无人机管理系统
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbar-collapse" shiro:authenticated="">
+            <ul class="nav navbar-nav">
+                <li><a th:href="@{/drone/list}">
+                    <span class="glyphicon glyphicon-list"></span> 无人机列表</a></li>
+                <li><a th:href="@{/drone/add}">
+                    <span class="glyphicon glyphicon-plus"></span> 新增无人机</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-user"></span>
+                        <span shiro:principal=""></span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/logout}">
+                            <span class="glyphicon glyphicon-log-out"></span> 退出登录</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- 主体内容区域 -->
+<div class="container-fluid main-container" th:fragment="body">
+    <div class="row">
+        <!-- 侧边栏 -->
+        <div class="col-sm-3 col-md-2 sidebar" shiro:authenticated="">
+            <ul class="nav nav-sidebar">
+                <li><a th:href="@{/drone/list}">
+                    <span class="glyphicon glyphicon-th-list"></span> 无人机列表</a></li>
+                <li><a th:href="@{/drone/add}">
+                    <span class="glyphicon glyphicon-plus-sign"></span> 新增无人机</a></li>
+            </ul>
+            <hr>
+            <ul class="nav nav-sidebar">
+                <li><a th:href="@{/druid}" target="_blank">
+                    <span class="glyphicon glyphicon-dashboard"></span> Druid 监控</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" shiro:authenticated="">
+            <!-- 提示消息 -->
+            <th:block th:if="${success}">
+                <div class="alert alert-success alert-dismissible fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="关闭">
+                        <span aria-hidden="true">&times;</span></button>
+                    <span th:text="${success}"></span>
+                </div>
+            </th:block>
+            <th:block th:if="${error}">
+                <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="关闭">
+                        <span aria-hidden="true">&times;</span></button>
+                    <span th:text="${error}"></span>
+                </div>
+            </th:block>
+</div>
+</html>

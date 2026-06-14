@@ -1,0 +1,84 @@
+# ============================================================
+# 默认配置 — SQLite 环境
+# 激活方式: 默认激活 sqlite profile
+# ============================================================
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    # 禁用 URL Session 重写，只使用 Cookie —— 防止重定向 URL 中追加 ;jsessionid=
+    # 导致 Tomcat 拒绝含分号的 URL，返回 400 Bad Request
+    session:
+      tracking-modes: cookie
+
+spring:
+  profiles:
+    active: sqlite
+
+  # 全面排除 Shiro 自动配置，由 ShiroConfig 全手动管理
+  autoconfigure:
+    exclude:
+      - org.apache.shiro.spring.boot.autoconfigure.ShiroAutoConfiguration
+      - org.apache.shiro.spring.boot.autoconfigure.ShiroBeanAutoConfiguration
+      - org.apache.shiro.spring.boot.autoconfigure.ShiroAnnotationProcessorAutoConfiguration
+      - org.apache.shiro.spring.config.web.autoconfigure.ShiroWebAutoConfiguration
+      - org.apache.shiro.spring.config.web.autoconfigure.ShiroWebFilterConfiguration
+
+  # Thymeleaf
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    mode: HTML
+    prefix: classpath:/templates/
+    suffix: .html
+
+  # 静态资源
+  resources:
+    static-locations: classpath:/static/
+
+  # HTTP 请求/响应编码强制 UTF-8 —— 否则中文 Windows 系统默认 GBK 会导致中文乱码
+  # 注: spring.http.encoding 在 Spring Boot 2.2.x 已废弃，同时保留新旧两套以确保兼容
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# MyBatis
+mybatis:
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  type-aliases-package: com.drone.management.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+# Druid 监控
+druid:
+  stat-view-servlet:
+    enabled: true
+    login-username: admin
+    login-password: admin123
+    url-pattern: /druid/*
+  web-stat-filter:
+    enabled: true
+    url-pattern: /*
+    exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
+
+---
+# ============================================================
+# SQLite Profile
+# ============================================================
+spring:
+  profiles: sqlite
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:drone.db
+    # SQLite 连接池建议使用以下参数
+    druid:
+      initial-size: 1
+      min-idle: 1
+      max-active: 5
+      max-wait: 60000
+      validation-query: SELECT 1
+      test-on-borrow: true
